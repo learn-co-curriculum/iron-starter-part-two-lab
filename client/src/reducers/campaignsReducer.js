@@ -30,7 +30,21 @@ export default (state = [], action) => {
             ];
         };
 
-        // Add Cases For SET_COMMENTS, ADD_COMMENT, REMOVE_COMMENT Here
+        case 'SET_COMMENTS':
+        case 'ADD_COMMENT':
+        case 'REMOVE_COMMENT': {
+            const index = state.findIndex(campaign => campaign.id === action.campaignId);
+            const campaign = state[index];
+            const updatedCampaign = Object.assign({}, campaign, {
+                comments: commentsReducer(campaign.comments, action)
+            });
+
+            return [
+                ...state.slice(0, index),
+                updatedCampaign,
+                ...state.slice(index + 1)
+            ];
+        };
         
         default: {
             return state;
