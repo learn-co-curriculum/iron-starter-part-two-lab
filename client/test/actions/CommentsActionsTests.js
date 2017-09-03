@@ -81,10 +81,6 @@ describe('Comments Actions', () => {
         const url = 'http://localhost:3001/api';
         const middlewares = [thunk];
         const mockStore = configureMockStore(middlewares);
-        const requiredActionCreators = [
-            { type: 'MAKING_API_REQUEST' },
-            { type: 'SUCCESSFUL_API_REQUEST' }
-        ];
         let store;
         
         beforeEach(() => {
@@ -94,21 +90,20 @@ describe('Comments Actions', () => {
         afterEach(() => nock.cleanAll());
     
         describe('fetchComments', () => {
-            it('dispatches MAKING_API_REQUEST, SUCCESSFUL_API_REQUEST & SET_COMMENTS types', () => {
+            it('dispatches SET_COMMENTS action type', () => {
                 nock(url)
                     .get(`/campaigns/${campaign.id}/comments`)
                     .reply(200, comments);
     
                 return store.dispatch(fetchComments(campaign.id))
                     .then(() => expect(store.getActions()).to.deep.equal([
-                        ...requiredActionCreators,
                         { type: 'SET_COMMENTS', comments, campaignId: comments[0].campaign.id }
                     ]));
             });
         });
     
         describe('createComment', () => {
-            it('dispatches MAKING_API_REQUEST, SUCCESSFUL_API_REQUEST & ADD_COMMENT types', () => {
+            it('dispatches ADD_COMMENT action type', () => {
                 const newComment = { content: 'Test Comment' };
     
                 nock(url)
@@ -117,21 +112,19 @@ describe('Comments Actions', () => {
     
                 return store.dispatch(createComment(campaign.id, newComment))
                     .then(() => expect(store.getActions()).to.deep.equal([
-                        ...requiredActionCreators,
                         { type: 'ADD_COMMENT', comment, campaignId: comment.campaign.id }
                     ]));
             });
         });
     
         describe('deleteComment', () => {
-            it('dispatches MAKING_API_REQUEST, SUCCESSFUL_API_REQUEST & REMOVE_COMMENT types', () => {
+            it('dispatches REMOVE_COMMENT action type', () => {
                 nock(url)
                     .delete(`/campaigns/${campaign.id}/comments/${comment.id}`)
                     .reply(204);
     
                 return store.dispatch(deleteComment(campaign.id, comment.id))
                     .then(() => expect(store.getActions()).to.deep.equal([
-                        ...requiredActionCreators,
                         { type: 'REMOVE_COMMENT', commentId: comment.id, campaignId: comment.campaign.id }
                     ]));
             });

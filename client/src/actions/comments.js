@@ -1,10 +1,3 @@
-import { 
-    makingAPIRequest, 
-    successfulAPIRequest, 
-    unsuccessfulAPIRequest 
-} from './apiRequestStatus';
-
-const API_URL = 'http://localhost:3001/api';
 // @ Action Creators
 
 export const setComments = comments => {
@@ -32,23 +25,21 @@ export const removeComment = (commentId, campaignId) => {
 };
 
 // @ Async Actions 
+const API_URL = 'http://localhost:3001/api';
 
 export const fetchComments = campaignId => {
     return dispatch => {
-        dispatch(makingAPIRequest());
         return fetch(`${API_URL}/campaigns/${campaignId}/comments`)
             .then(response => response.json())
             .then(comments => {
-                dispatch(successfulAPIRequest());
                 dispatch(setComments(comments));
             })
-            .catch(err => dispatch(unsuccessfulAPIRequest()));
+            .catch(err => console.log(err));
     };
 };
 
 export const createComment = (campaignId, newComment) => {
     return dispatch => {
-        dispatch(makingAPIRequest());
         return fetch(`${API_URL}/campaigns/${campaignId}/comments`, {
             method: 'POST',
             headers: { 
@@ -60,25 +51,20 @@ export const createComment = (campaignId, newComment) => {
         })
         .then(response => response.json())
         .then(comment => {
-            dispatch(successfulAPIRequest());
             dispatch(addComment(comment));
         })
-        .catch(err => dispatch(unsuccessfulAPIRequest()));
+        .catch(err => console.log(err));
     };
 };
 
 export const deleteComment = (campaignId, commentId) => {
     return dispatch => {
-        dispatch(makingAPIRequest());
         return fetch(`${API_URL}/campaigns/${campaignId}/comments/${commentId}`, {
             method: 'DELETE'
         })
         .then(response => {
             if (response.ok) {
-                dispatch(successfulAPIRequest());
                 dispatch(removeComment(commentId, campaignId));
-            } else {
-                dispatch(unsuccessfulAPIRequest());
             }
         })
         .catch(err => unsuccessfulAPIRequest());
